@@ -5,7 +5,9 @@ import { useToast } from "@/hooks/use-toast";
 import { authAPI } from "@/api/client";
 
 interface User {
+  id: number;
   email: string;
+  username: string;
   [key: string]: any;
 }
 
@@ -27,8 +29,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     // Check if user is logged in
-    const isLoggedIn = localStorage.getItem("isLoggedIn");
-    if (isLoggedIn === "true") {
+    const token = localStorage.getItem("authToken");
+    if (token) {
       const userData = localStorage.getItem("user");
       if (userData) {
         setUser(JSON.parse(userData));
@@ -39,16 +41,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (email: string, password: string) => {
     try {
-      // For demonstration - would use actual API in production
-      // const response = await authAPI.login(email, password);
-      // localStorage.setItem("authToken", response.token);
-      // localStorage.setItem("user", JSON.stringify(response.user));
+      const response = await authAPI.login(email, password);
       
-      // Simulating successful login for demo
-      const demoUser = { email };
+      localStorage.setItem("authToken", response.token);
+      localStorage.setItem("refreshToken", response.refresh);
+      localStorage.setItem("user", JSON.stringify(response.user));
       localStorage.setItem("isLoggedIn", "true");
-      localStorage.setItem("user", JSON.stringify(demoUser));
-      setUser(demoUser);
+      
+      setUser(response.user);
       setIsAuthenticated(true);
       
       toast({
@@ -70,7 +70,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = () => {
     authAPI.logout();
-    localStorage.removeItem("isLoggedIn");
     setUser(null);
     setIsAuthenticated(false);
     navigate("/login");
@@ -83,13 +82,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const register = async (userData: any) => {
     try {
-      // For demonstration - would use actual API in production
-      // await authAPI.register(userData);
+      const response = await authAPI.register({
+        username: userData.email,
+        email: userData.email,
+        password: userData.password,
+        full_name: userData.fullName
+      });
       
       toast({
         title: "Account created",
         description: "Your account has been created successfully!",
       });
+      
+      // Optionally auto-login after registration
+      // localStorage.setItem("authToken", response.tokens.access);
+      // localStorage.setItem("refreshToken", response.tokens.refresh);
+      // localStorage.setItem("user", JSON.stringify(response.user));
+      // setUser(response.user);
+      // setIsAuthenticated(true);
+      // navigate("/products");
+      
     } catch (error) {
       console.error("Registration error:", error);
       toast({

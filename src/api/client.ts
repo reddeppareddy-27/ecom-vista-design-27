@@ -1,6 +1,6 @@
 
 // API configuration file
-const API_URL = "http://localhost:8000/api"; // Change to your Django API URL
+const API_URL = "http://localhost:8000/api"; // Django API URL
 
 // Generic API call function with fetch
 export const fetchAPI = async <T>(
@@ -22,7 +22,7 @@ export const fetchAPI = async <T>(
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
-    throw new Error(error.message || `API error: ${response.status}`);
+    throw new Error(error.message || error.error || `API error: ${response.status}`);
   }
 
   // Handle empty responses
@@ -37,14 +37,14 @@ export const fetchAPI = async <T>(
 // Auth related functions
 export const authAPI = {
   login: async (email: string, password: string) => {
-    return fetchAPI<{ token: string; user: any }>('/auth/login/', {
+    return fetchAPI<{token: string; refresh: string; user: any}>('/auth/login/', {
       method: 'POST',
       body: JSON.stringify({ email, password })
     });
   },
   
   register: async (userData: any) => {
-    return fetchAPI<{ message: string }>('/auth/register/', {
+    return fetchAPI<{message: string; tokens: {access: string, refresh: string}; user: any}>('/auth/register/', {
       method: 'POST',
       body: JSON.stringify(userData)
     });
@@ -52,7 +52,20 @@ export const authAPI = {
   
   logout: () => {
     localStorage.removeItem("authToken");
+    localStorage.removeItem("refreshToken");
     localStorage.removeItem("user");
+    localStorage.removeItem("isLoggedIn");
+  },
+  
+  refreshToken: async (refreshToken: string) => {
+    return fetchAPI<{access: string}>('/auth/token/refresh/', {
+      method: 'POST',
+      body: JSON.stringify({ refresh: refreshToken })
+    });
+  },
+  
+  getCurrentUser: async () => {
+    return fetchAPI<any>('/auth/user/');
   }
 };
 
@@ -64,5 +77,25 @@ export const productsAPI = {
   
   getById: async (id: string | number) => {
     return fetchAPI<any>(`/products/${id}/`);
+  },
+  
+  create: async (productData: any) => {
+    return fetchAPI<any>('/products/', {
+      method: 'POST',
+      body: JSON.stringify(productData)
+    });
+  },
+  
+  update: async (id: string | number, productData: any) => {
+    return fetchAPI<any>(`/products/${id}/`, {
+      method: 'PUT',
+      body: JSON.stringify(productData)
+    });
+  },
+  
+  delete: async (id: string | number) => {
+    return fetchAPI<void>(`/products/${id}/`, {
+      method: 'DELETE'
+    });
   }
 };
