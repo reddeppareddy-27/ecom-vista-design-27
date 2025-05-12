@@ -1,7 +1,5 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Navigation from "@/components/Navigation";
+import { authAPI } from "@/api/client";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -49,15 +48,12 @@ const Login = () => {
     setLoading(true);
     
     try {
-      // Note: In a real implementation, this would call Supabase auth
-      // const { data, error } = await supabase.auth.signInWithPassword({
-      //   email: loginData.email,
-      //   password: loginData.password,
-      // });
+      // For demonstration purposes only - would use actual API in production:
+      // const response = await authAPI.login(loginData.email, loginData.password);
+      // localStorage.setItem("authToken", response.token);
+      // localStorage.setItem("user", JSON.stringify(response.user));
       
-      // if (error) throw error;
-      
-      // For demo purposes, we'll simulate a successful login
+      // Simulating successful login for demo
       toast({
         title: "Login successful",
         description: "Welcome back!",
@@ -104,20 +100,14 @@ const Login = () => {
     setLoading(true);
     
     try {
-      // Note: In a real implementation, this would call Supabase auth
-      // const { data, error } = await supabase.auth.signUp({
+      // For demonstration purposes only - would use actual API in production:
+      // await authAPI.register({
       //   email: signupData.email,
       //   password: signupData.password,
-      //   options: {
-      //     data: {
-      //       full_name: signupData.fullName,
-      //     }
-      //   }
+      //   full_name: signupData.fullName
       // });
       
-      // if (error) throw error;
-      
-      // For demo purposes, we'll simulate a successful signup
+      // Simulating successful signup for demo
       toast({
         title: "Account created",
         description: "Your account has been created successfully!",

@@ -1,10 +1,10 @@
 
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import Navigation from "@/components/Navigation";
+import { productsAPI } from "@/api/client";
 
 interface Product {
   id: number;
@@ -22,7 +22,11 @@ const Products = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        // Normally we would fetch from Supabase, but for demo purposes we'll use static data
+        // For now, we'll use static data, but this would be replaced with API call:
+        // const data = await productsAPI.getAll();
+        // setProducts(data);
+        
+        // Static data for demonstration
         setProducts([
           {
             id: 1,
