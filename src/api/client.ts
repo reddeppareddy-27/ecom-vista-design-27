@@ -66,6 +66,20 @@ export const authAPI = {
   
   getCurrentUser: async () => {
     return fetchAPI<any>('/auth/user/');
+  },
+
+  requestPasswordReset: async (email: string) => {
+    return fetchAPI<{message: string}>('/auth/password-reset/', {
+      method: 'POST',
+      body: JSON.stringify({ email })
+    });
+  },
+  
+  resetPassword: async (token: string, password: string) => {
+    return fetchAPI<{message: string}>('/auth/password-reset/confirm/', {
+      method: 'POST',
+      body: JSON.stringify({ token, password })
+    });
   }
 };
 
@@ -97,5 +111,20 @@ export const productsAPI = {
     return fetchAPI<void>(`/products/${id}/`, {
       method: 'DELETE'
     });
+  },
+
+  createOrder: async (orderData: any) => {
+    return fetchAPI<any>('/orders/', {
+      method: 'POST',
+      body: JSON.stringify(orderData)
+    });
+  },
+
+  getOrders: async () => {
+    return fetchAPI<any[]>('/orders/');
+  },
+  
+  getOrderById: async (id: string | number) => {
+    return fetchAPI<any>(`/orders/${id}/`);
   }
 };

@@ -8,6 +8,10 @@ interface User {
   id: number;
   email: string;
   username: string;
+  profile?: {
+    full_name: string;
+    phone: string;
+  };
   [key: string]: any;
 }
 
@@ -17,6 +21,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   register: (userData: any) => Promise<void>;
+  requestPasswordReset: (email: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -86,7 +91,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         username: userData.email,
         email: userData.email,
         password: userData.password,
-        full_name: userData.fullName
+        full_name: userData.fullName,
+        phone: userData.phone
       });
       
       toast({
@@ -112,9 +118,34 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       throw error;
     }
   };
+  
+  const requestPasswordReset = async (email: string) => {
+    try {
+      await authAPI.requestPasswordReset(email);
+      toast({
+        title: "Password reset requested",
+        description: "If your email exists in our system, you will receive a password reset link",
+      });
+    } catch (error) {
+      console.error("Password reset request error:", error);
+      toast({
+        title: "Password reset request failed",
+        description: error instanceof Error ? error.message : "Please try again",
+        variant: "destructive",
+      });
+      throw error;
+    }
+  };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, login, logout, register }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      isAuthenticated, 
+      login, 
+      logout, 
+      register, 
+      requestPasswordReset 
+    }}>
       {children}
     </AuthContext.Provider>
   );

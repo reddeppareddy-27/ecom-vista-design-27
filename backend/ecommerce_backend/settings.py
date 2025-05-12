@@ -131,3 +131,39 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CORS_ALLOW_CREDENTIALS = True
+
+# Email settings
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For development
+# For production, use:
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.example.com'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = 'your-email@example.com'
+# EMAIL_HOST_PASSWORD = 'your-password'
+
+DEFAULT_FROM_EMAIL = 'noreply@ecommerce.com'
+ADMINS = [('Admin', 'admin@ecommerce.com')]
+
+# Frontend URL for password reset links
+FRONTEND_URL = 'http://localhost:5173'  # Change to your frontend URL
+
+# Logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+}
+
+# SMS Service settings (for example, Twilio)
+# TWILIO_ACCOUNT_SID = 'your-twilio-account-sid'
+# TWILIO_AUTH_TOKEN = 'your-twilio-auth-token'
+# TWILIO_PHONE_NUMBER = '+1234567890'
